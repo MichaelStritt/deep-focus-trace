@@ -1,11 +1,13 @@
 /* Path: src/App.jsx */
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router';
-import { Sun, Moon, Settings, Home } from 'lucide-react';
+import { Sun, Moon, Settings, Home as HomeIcon } from 'lucide-react';
+import Home from './pages/Home';
+import SettingsPage from './pages/Settings';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  const location = useLocation(); // Get current path
+  const location = useLocation();
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -30,7 +32,7 @@ function App() {
         {/* Settings / Home Toggle */}
         {location.pathname === '/settings' ? (
           <Link to="/" className="btn btn-outline btn-circle">
-            <Home size={24} />
+            <HomeIcon size={24} />
           </Link>
         ) : (
           <Link to="/settings" className="btn btn-outline btn-circle">
@@ -41,18 +43,8 @@ function App() {
 
       {/* Main Content */}
       <Routes>
-        <Route path="/" element={
-          <div className="grow flex flex-col items-center justify-center gap-4">
-            <h1 className="text-2xl font-bold">Theme Test</h1>
-            <button className="btn btn-primary">Action Button</button>
-          </div>
-        } />
-        
-        <Route path="/settings" element={
-          <div className="grow flex flex-col items-center justify-center gap-4">
-            <h1 className="text-2xl font-bold">Settings Page</h1>
-          </div>
-        } />
+        <Route path="/" element={<Home />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
       
     </div>
