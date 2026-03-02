@@ -1,7 +1,22 @@
-# DeepFocusTrace
+# DeepFocus Trace
 
-A React-based project tracker designed for deep focus.
+A minimalist focus and productivity tracker built with React, Vite, Tailwind CSS v4, and daisyUI v5.
 
-## Development
-- `npm start`: Runs the app in development mode.
-- `npm run deploy`: Builds and deploys the app to GitHub Pages.
+# Development
+```bash
+npm install
+npm run dev
+```
+
+# Build
+
+```bash
+npm run build
+```
+
+## Tech Stack
+
+* **Framework:** React
+* **Build Tool:** Vite
+* **Styling:** Tailwind CSS v4
+* **UI Components:** daisyUI v5
