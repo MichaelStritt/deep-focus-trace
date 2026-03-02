@@ -7,7 +7,10 @@ import { Download } from 'lucide-react';
 import { useProjects } from '../hooks/useProjects';
 import { useLogs } from '../hooks/useLogs';
 
-export default function Home({ projects, setProjects, logs, setLogs, triggerToast, isManageMode, startTrace }) {
+// Added stopTrace and activeSession to the arguments
+export default function Home({ projects, setProjects, logs, setLogs, triggerToast, isManageMode, startTrace, stopTrace, activeSession }) {
+  
+  // Ensure logs is passed here for the Export functionality
   const { handleSaveProject, handleDeleteProject, handleExport, handleImport, handleReorder } = 
     useProjects(projects, setProjects, logs, triggerToast);
     
