@@ -46,24 +46,6 @@ function App() {
 
     return (
         <div className="h-screen flex flex-col bg-base-100 text-base-content transition-colors duration-300">
-            
-            {/* Active Session Global Overlay */}
-            {activeSession && (
-                <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-auto animate-in fade-in zoom-in duration-300">
-                    <div className="alert shadow-2xl border-2 border-primary/20 bg-base-200 flex items-center gap-6 px-6 py-3">
-                        <div className="flex flex-col">
-                            <span className="text-[10px] uppercase font-black tracking-widest text-primary leading-none">Tracing Active</span>
-                            <span className="font-bold text-sm leading-tight">{activeSession.projectName}</span>
-                        </div>
-                        <button 
-                            onClick={stopTrace} 
-                            className="btn btn-error btn-sm gap-2"
-                        >
-                            <StopCircle size={18} /> Stop
-                        </button>
-                    </div>
-                </div>
-            )}
       
             {/* Header Bar */}
             <div className="w-full p-4 flex justify-end items-center gap-2 bg-transparent">
