@@ -9,6 +9,15 @@ import Tasks from './pages/Tasks';
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const location = useLocation();
+  const [toast, setToast] = useState(null);
+
+  const triggerToast = (message) => {
+    console.log(`${message}`);
+    setToast(message);
+    setTimeout(() => {
+      setToast(null);
+    }, 3000);
+  };
 
   // Project, Task, and Log State
   const [projects, setProjects] = useState(() => JSON.parse(localStorage.getItem("projects")) || []);
@@ -67,10 +76,19 @@ function App() {
 
       {/* Main Content */}
       <Routes>
-        <Route path="/" element={<Home projects={projects} logs={logs} />} />
+        <Route path="/" element={<Home projects={projects} setProjects={setProjects} logs={logs} triggerToast={triggerToast} />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/tasks" element={<Tasks projects={projects} tasks={tasks} setTasks={setTasks} />} />
       </Routes>
+
+      {/* Toast Container */}
+      {toast && (
+        <div className="toast toast-start toast-bottom p-6">
+          <div className="alert alert-success shadow-lg">
+            <span>{toast}</span>
+          </div>
+        </div>
+      )}
       
     </div>
   );
