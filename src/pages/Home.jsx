@@ -26,12 +26,14 @@ export default function Home({ projects, setProjects, logs, setLogs, triggerToas
         </div>
         
         <ProjectList 
-          projects={projects}
-          isManageMode={isManageMode}
-          onReorder={handleReorder}
-          onDelete={handleDeleteProject}
-          onClearLogs={handleClearProjectLogs}
-          onStartTrace={(id, name) => startTrace(id, name)}
+            projects={projects}
+            isManageMode={isManageMode}
+            activeSession={activeSession}
+            onReorder={handleReorder}
+            onDelete={handleDeleteProject}
+            onClearLogs={handleClearProjectLogs}
+            onStartTrace={startTrace} 
+            onStopTrace={stopTrace}
         />
 
         {!isManageMode ? (
