@@ -1,9 +1,9 @@
 /* Path: src/App.jsx */
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router';
-import { Sun, Moon, Settings, Home as HomeIcon } from 'lucide-react';
+import { Sun, Moon, Settings as SettingsIcon, Home as HomeIcon } from 'lucide-react'; 
 import Home from './pages/Home';
-import SettingsPage from './pages/Settings';
+import Settings from './pages/Settings';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -36,7 +36,7 @@ function App() {
           </Link>
         ) : (
           <Link to="/settings" className="btn btn-outline btn-circle">
-            <Settings size={24} />
+            <SettingsIcon size={24} />
           </Link>
         )}
       </div>
