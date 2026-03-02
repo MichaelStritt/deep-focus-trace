@@ -82,7 +82,7 @@ function App() {
 
             {/* Main Content */}
             <Routes>
-                <Route path="/" element={<Home projects={projects} setProjects={setProjects} logs={logs} triggerToast={triggerToast} isManageMode={isManageMode} startTrace={startTrace} />} />
+                <Route path="/" element={<Home projects={projects} setProjects={setProjects} logs={logs} setLogs={setLogs} triggerToast={triggerToast} isManageMode={isManageMode} startTrace={startTrace} stopTrace={stopTrace} activeSession={activeSession} />} />
                 <Route path="/tasks" element={<Tasks projects={projects} tasks={tasks} setTasks={setTasks} />} />
             </Routes>
 
