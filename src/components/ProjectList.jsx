@@ -13,6 +13,7 @@ export default function ProjectList({
     onDelete, 
     onClearLogs,
     onUpdateLogTask,
+    onUpdateActiveTask, // New prop to handle live session updates
     onStartTrace,
     onStopTrace,
     activeSession 
@@ -44,6 +45,7 @@ export default function ProjectList({
                         onClick={onDelete}
                         onClearLogs={onClearLogs}
                         onUpdateLogTask={onUpdateLogTask}
+                        onUpdateActiveTask={onUpdateActiveTask}
                         dailyTotal={getProjectDailyTotal(project.id)}
                     />
                     </div>

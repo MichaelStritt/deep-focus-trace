@@ -12,6 +12,7 @@ export default function ProjectCard({
     onClick, 
     onClearLogs,
     onUpdateLogTask,
+    onUpdateActiveTask,
     onStart,
     onStop,
     activeSession,
@@ -143,10 +144,17 @@ export default function ProjectCard({
                                 <select 
                                     className="select select-ghost select-xs p-0 h-auto min-h-0 font-medium text-primary focus:bg-transparent focus:outline-none w-fit"
                                     value={activeSession.taskId || ""}
-                                    onChange={(e) => onUpdateLogTask(activeSession.id, e.target.value)}
+                                    onChange={(e) => {
+                                        console.log("Live task selection:", e.target.value);
+                                        onUpdateActiveTask(e.target.value);
+                                    }}
                                 >
                                     <option value="">Tag a task...</option>
-                                    {tasks.map(t => <option key={t.id} value={t.id}>{t.completed ? '✓ ' : ''}{t.text}</option>)}
+                                    {tasks.map(t => (
+                                        <option key={t.id} value={t.id}>
+                                            {t.completed ? '✓ ' : ''}{t.text}
+                                        </option>
+                                    ))}
                                 </select>
                             )}
                         </div>

@@ -7,7 +7,7 @@ import { Download } from 'lucide-react';
 
 export default function Home({ 
     projects, tasks, logs, triggerToast, isManageMode, 
-    startTrace, stopTrace, activeSession,
+    startTrace, stopTrace, activeSession, onUpdateActiveTask, // Added handler
     handleSaveProject, handleDeleteProject, handleExport, handleImport, handleReorder,
     handleClearProjectLogs, getProjectDailyTotal, handleUpdateLogTask 
 }) {
@@ -30,6 +30,7 @@ export default function Home({
             getProjectDailyTotal={getProjectDailyTotal}
             isManageMode={isManageMode}
             activeSession={activeSession}
+            onUpdateActiveTask={onUpdateActiveTask} 
             onReorder={handleReorder}
             onDelete={handleDeleteProject}
             onClearLogs={handleClearProjectLogs}

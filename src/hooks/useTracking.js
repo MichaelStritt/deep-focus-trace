@@ -8,7 +8,7 @@ export const useTracking = (logs, setLogs, triggerToast) => {
     });
 
     useEffect(() => {
-    localStorage.setItem('activeSession', JSON.stringify(activeSession));
+        localStorage.setItem('activeSession', JSON.stringify(activeSession));
     }, [activeSession]);
 
     const stopTrace = (silent = false) => {
@@ -21,6 +21,7 @@ export const useTracking = (logs, setLogs, triggerToast) => {
         const newLog = {
             id: Date.now().toString(),
             projectId: activeSession.projectId,
+            taskId: activeSession.taskId || null,
             startTime: activeSession.startTime,
             endTime: endTime.toISOString(),
             durationMs
@@ -37,20 +38,30 @@ export const useTracking = (logs, setLogs, triggerToast) => {
     };
 
     const startTrace = (projectId, projectName) => {
-    // If something is running, stop it first (Switch logic)
-    if (activeSession) {
-        stopTrace(true); 
-    }
+        if (activeSession) {
+            stopTrace(true); 
+        }
 
-    const newSession = {
-        projectId,
-        projectName,
-        startTime: new Date().toISOString(),
+        const newSession = {
+            id: Date.now().toString(), 
+            projectId,
+            projectName,
+            startTime: new Date().toISOString(),
+            taskId: null 
+        };
+
+        setActiveSession(newSession);
+        triggerToast(`Tracing: ${projectName}`);
     };
 
-    setActiveSession(newSession);
-    triggerToast(`Tracing: ${projectName}`);
+    const updateActiveTask = (taskId) => {
+        console.log("TrackingHook: Updating active task to:", taskId);
+        if (!activeSession) {
+            console.warn("TrackingHook: No active session found to update!");
+            return;
+        }
+        setActiveSession(prev => ({ ...prev, taskId }));
     };
 
-    return { activeSession, startTrace, stopTrace };
+    return { activeSession, startTrace, stopTrace, updateActiveTask };
 };

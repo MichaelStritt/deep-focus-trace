@@ -1,5 +1,5 @@
 /* Path: src/hooks/useProjects.js */
-export const useProjects = (projects, setProjects, logs, triggerToast) => {
+export const useProjects = (projects, setProjects, tasks, setTasks, logs, setLogs, triggerToast) => {
   
   const handleSaveProject = (name, icon) => {
     const projectToAdd = { 
@@ -14,57 +14,69 @@ export const useProjects = (projects, setProjects, logs, triggerToast) => {
 
   const handleDeleteProject = (id) => {
     const filtered = projects.filter(p => p.id !== id);
-    // Normalize indices to prevent gaps
     const normalized = filtered.map((p, i) => ({ ...p, index: i }));
     setProjects(normalized);
     triggerToast("Project removed.");
   };
 
   const handleExport = () => {
-    // Create a backup object containing both datasets
-    const backupData = {
-      projects: projects,
-      logs: logs || []
+    const exportData = {
+      projects,
+      logs: logs.map(log => ({
+        id: log.id,
+        projectId: log.projectId,
+        taskId: log.taskId,
+        startTime: log.startTime,
+        endTime: log.endTime,
+        durationMs: log.durationMs
+      })),
+      tasks,
+      exportDate: new Date().toISOString(),
+      version: "1.1"
     };
 
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", `focus_trace_backup_${new Date().toISOString().split('T')[0]}.json`);
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-    triggerToast("Backup exported with logs!");
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `time-tracker-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    triggerToast("Data exported successfully");
   };
 
   const handleImport = (importedData) => {
-    const existingIds = new Set(projects.map(p => p.id));
-    const newItems = importedData.filter(p => !existingIds.has(p.id));
-    const skipCount = importedData.length - newItems.length;
+    // Handle version 1.1 structure (object with projects, tasks, logs)
+    if (importedData.version === "1.1") {
+      setProjects(importedData.projects || []);
+      setTasks(importedData.tasks || []);
+      setLogs(importedData.logs || []);
+      triggerToast("All data restored from backup.");
+      return;
+    }
 
-    if (newItems.length > 0) {
-      // Append new items and re-index the entire resulting array
-      const combined = [...projects, ...newItems];
-      const normalized = combined.map((p, i) => ({ ...p, index: i }));
-      
-      setProjects(normalized);
-      triggerToast(`Imported ${newItems.length} projects.${skipCount > 0 ? ` Skipped ${skipCount} duplicates.` : ''}`);
-    } else if (skipCount > 0) {
-      triggerToast("No new projects found.");
+    // Fallback for legacy array-only imports (projects only)
+    if (Array.isArray(importedData)) {
+      const existingIds = new Set(projects.map(p => p.id));
+      const newItems = importedData.filter(p => !existingIds.has(p.id));
+      if (newItems.length > 0) {
+        const combined = [...projects, ...newItems];
+        const normalized = combined.map((p, i) => ({ ...p, index: i }));
+        setProjects(normalized);
+        triggerToast(`Imported ${newItems.length} projects.`);
+      } else {
+        triggerToast("No new projects found.");
+      }
     }
   };
 
   const handleReorder = (result) => {
-    // dropped outside the list
-    if (!result.destination) return;
-    // position hasn't changed
-    if (result.destination.index === result.source.index) return;
+    if (!result.destination || result.destination.index === result.source.index) return;
 
     const items = Array.from(projects);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Re-normalize indices to match new array order
     const normalized = items.map((p, i) => ({ ...p, index: i }));
     setProjects(normalized);
   };

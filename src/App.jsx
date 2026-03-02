@@ -25,8 +25,9 @@ function App() {
     const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem("logs")) || []);
 
     // Centralized Logic Hooks
-    const { activeSession, startTrace, stopTrace } = useTracking(logs, setLogs, triggerToast);
-    const projectLogic = useProjects(projects, setProjects, logs, triggerToast);
+    const { activeSession, startTrace, stopTrace, updateActiveTask } = useTracking(logs, setLogs, triggerToast);
+    // Updated to include tasks/logs setters for the new handleImport/Export
+    const projectLogic = useProjects(projects, setProjects, tasks, setTasks, logs, setLogs, triggerToast);
     const taskLogic = useTasks(tasks, setTasks, triggerToast);
     const logLogic = useLogs(logs, setLogs, triggerToast);
 
@@ -70,7 +71,7 @@ function App() {
 
             {/* Main Content */}
             <Routes>
-                <Route path="/" element={<Home projects={projects} tasks={tasks} logs={logs} isManageMode={isManageMode} startTrace={startTrace} stopTrace={stopTrace} activeSession={activeSession} {...projectLogic} {...logLogic} />} />
+                <Route path="/" element={<Home projects={projects} tasks={tasks} logs={logs} isManageMode={isManageMode} startTrace={startTrace} stopTrace={stopTrace} onUpdateActiveTask={updateActiveTask} activeSession={activeSession} {...projectLogic} {...logLogic} />} />
                 <Route path="/tasks" element={<Tasks tasks={tasks} isManageMode={isManageMode} {...taskLogic} />} />
             </Routes>
 
