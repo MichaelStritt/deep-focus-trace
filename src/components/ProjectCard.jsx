@@ -27,7 +27,7 @@ export default function ProjectCard({
     return (
       <button 
         onClick={() => setIsEditing(true)}
-        className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-base-content/20 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all group gap-2 w-full"
+        className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-base-content/20 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all group gap-2 w-full h-23"
       >
         <Plus className="text-base-content/30 group-hover:text-primary" size={32} />
         <span className="text-sm font-medium text-base-content/30 group-hover:text-primary">Add project</span>
@@ -48,7 +48,8 @@ export default function ProjectCard({
     const CurrentIcon = Icons[iconList[iconIndex]];
 
     return (
-      <div className="flex items-center p-4 bg-base-200 border-2 border-dashed border-primary rounded-2xl gap-4 w-full">
+      <div className="flex items-center p-4 bg-base-200 border-2 border-dashed border-primary rounded-2xl gap-4 w-full h-23">
+        {/* Clickable Icon to Cycle */}
         <button 
           onClick={cycleIcon}
           className="p-3 bg-primary/10 rounded-xl text-primary shrink-0 hover:bg-primary/20 transition-colors"
@@ -81,7 +82,7 @@ export default function ProjectCard({
   const LucideIcon = Icons[project.icon] || Icons.Briefcase;
   return (
     <div 
-      className={`relative flex items-center p-4 bg-base-200 border-2 rounded-2xl shadow-sm transition-all gap-4 w-full h-[92px] ${
+      className={`relative flex items-center p-4 bg-base-200 border-2 rounded-2xl shadow-sm transition-all gap-4 w-full h-23 ${
         isManageMode ? 'border-error/20' : 'border-transparent hover:shadow-md'
       }`}
     >

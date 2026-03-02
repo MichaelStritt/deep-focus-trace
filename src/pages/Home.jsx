@@ -1,7 +1,8 @@
 /* Path: src/pages/Home.jsx */
 import React from 'react';
 import ProjectCard from '../components/ProjectCard';
-import { Download, UploadCloud } from 'lucide-react';
+import ProjectImport from '../components/ProjectImport';
+import { Download } from 'lucide-react';
 
 export default function Home({ projects, setProjects, logs, triggerToast, isManageMode }) {
   
@@ -25,22 +26,6 @@ export default function Home({ projects, setProjects, logs, triggerToast, isMana
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
     triggerToast("Projects exported!");
-  };
-
-  const handleImport = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const imported = JSON.parse(event.target.result);
-        setProjects([...projects, ...imported]);
-        triggerToast("Projects imported!");
-      } catch (err) {
-        triggerToast("Invalid JSON file.");
-      }
-    };
-    reader.readAsText(file);
   };
 
   return (
@@ -68,11 +53,13 @@ export default function Home({ projects, setProjects, logs, triggerToast, isMana
         {!isManageMode ? (
           <ProjectCard isPlaceholder onSave={handleSaveProject} />
         ) : (
-          <label className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-base-content/20 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all cursor-pointer group gap-2">
-            <UploadCloud className="text-base-content/30 group-hover:text-primary" size={32} />
-            <span className="text-sm font-medium text-base-content/30 group-hover:text-primary">Click or Drag to Import Projects</span>
-            <input type="file" accept=".json" className="hidden" onChange={handleImport} />
-          </label>
+          <ProjectImport 
+            onImport={(data) => {
+              setProjects([...projects, ...data]);
+              triggerToast(`${data.length} projects imported!`);
+            }} 
+            triggerToast={triggerToast} 
+          />
         )}
       </div>
     </div>
