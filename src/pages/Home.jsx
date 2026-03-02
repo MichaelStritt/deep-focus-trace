@@ -4,11 +4,12 @@ import ProjectCard from '../components/ProjectCard';
 
 export default function Home({ projects, setProjects, logs }) {
   
-  const handleSaveProject = (name) => {
+  // Updated to receive the icon from the ProjectCard
+  const handleSaveProject = (name, icon) => {
     const projectToAdd = {
       id: Date.now().toString(),
       name: name,
-      icon: 'Briefcase', // Default for now
+      icon: icon, 
     };
     setProjects([...projects, projectToAdd]);
   };
@@ -28,11 +29,10 @@ export default function Home({ projects, setProjects, logs }) {
             key={project.id} 
             project={project} 
             onClick={handleStartTrace} 
-            dailyTotal="0h 0m" // Placeholder for now
+            dailyTotal="0h 0m" 
           />
         ))}
-
-        {/* Add Project Card - creation state is now internal to the component */}
+        
         <ProjectCard 
           isPlaceholder 
           onSave={handleSaveProject} 

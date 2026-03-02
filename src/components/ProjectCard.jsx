@@ -12,6 +12,14 @@ export default function ProjectCard({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('');
+  
+  // Icon cycling logic
+  const iconList = ['Book', 'FlaskConical', 'Briefcase', 'Code', 'Car', 'Zap', 'Music', 'Coffee', 'Sun'];
+  const [iconIndex, setIconIndex] = useState(0);
+
+  const cycleIcon = () => {
+    setIconIndex((prev) => (prev + 1) % iconList.length);
+  };
 
   // 1. Placeholder State
   if (isPlaceholder && !isEditing) {
@@ -30,16 +38,25 @@ export default function ProjectCard({
   if (isEditing) {
     const handleInternalSave = () => {
       if (!name.trim()) return;
-      onSave(name);
+      onSave(name, iconList[iconIndex]);
       setName('');
+      setIconIndex(0);
       setIsEditing(false);
     };
 
+    const CurrentIcon = Icons[iconList[iconIndex]];
+
     return (
       <div className="flex items-center p-4 bg-base-200 border-2 border-dashed border-primary rounded-2xl gap-4 w-full">
-        <div className="p-3 bg-primary/10 rounded-xl text-primary shrink-0">
-          <Icons.Briefcase size={24} />
-        </div>
+        {/* Clickable Icon to Cycle */}
+        <button 
+          onClick={cycleIcon}
+          className="p-3 bg-primary/10 rounded-xl text-primary shrink-0 hover:bg-primary/20 transition-colors"
+          title="Click to change icon"
+        >
+          <CurrentIcon size={24} />
+        </button>
+        
         <input 
           autoFocus
           className="input input-ghost grow font-bold text-lg focus:bg-transparent px-0" 
