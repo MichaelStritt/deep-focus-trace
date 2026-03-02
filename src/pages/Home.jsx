@@ -3,30 +3,11 @@ import React from 'react';
 import ProjectCard from '../components/ProjectCard';
 import ProjectImport from '../components/ProjectImport';
 import { Download } from 'lucide-react';
+import { useProjects } from '../hooks/useProjects';
 
 export default function Home({ projects, setProjects, logs, triggerToast, isManageMode }) {
-  
-  const handleSaveProject = (name, icon) => {
-    const projectToAdd = { id: Date.now().toString(), name, icon: icon || 'Book' };
-    setProjects([...projects, projectToAdd]);
-    triggerToast("Project added successfully!");
-  };
-
-  const handleDeleteProject = (id) => {
-    setProjects(projects.filter(p => p.id !== id));
-    triggerToast("Project removed.");
-  };
-
-  const handleExport = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "projects_backup.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-    triggerToast("Projects exported!");
-  };
+  const { handleSaveProject, handleDeleteProject, handleExport, handleImport } = 
+    useProjects(projects, setProjects, triggerToast);
 
   return (
     <div className="grow p-6 flex flex-col items-center">
@@ -53,13 +34,7 @@ export default function Home({ projects, setProjects, logs, triggerToast, isMana
         {!isManageMode ? (
           <ProjectCard isPlaceholder onSave={handleSaveProject} />
         ) : (
-          <ProjectImport 
-            onImport={(data) => {
-              setProjects([...projects, ...data]);
-              triggerToast(`${data.length} projects imported!`);
-            }} 
-            triggerToast={triggerToast} 
-          />
+          <ProjectImport onImport={handleImport} triggerToast={triggerToast} />
         )}
       </div>
     </div>
