@@ -4,16 +4,13 @@ import ProjectList from '../components/ProjectList';
 import ProjectCard from '../components/ProjectCard';
 import ProjectImport from '../components/ProjectImport';
 import { Download } from 'lucide-react';
-import { useProjects } from '../hooks/useProjects';
 import { useLogs } from '../hooks/useLogs';
 
-// Added stopTrace and activeSession to the arguments
-export default function Home({ projects, setProjects, logs, setLogs, triggerToast, isManageMode, startTrace, stopTrace, activeSession }) {
-  
-  // Ensure logs is passed here for the Export functionality
-  const { handleSaveProject, handleDeleteProject, handleExport, handleImport, handleReorder } = 
-    useProjects(projects, setProjects, logs, triggerToast);
-    
+export default function Home({ 
+    projects, logs, setLogs, triggerToast, isManageMode, 
+    startTrace, stopTrace, activeSession,
+    handleSaveProject, handleDeleteProject, handleExport, handleImport, handleReorder 
+}) {
   const { handleClearProjectLogs, getProjectDailyTotal } = useLogs(logs, setLogs, triggerToast);
 
   return (

@@ -1,9 +1,11 @@
 /* Path: src/App.jsx */
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router';
-import { Sun, Moon, Settings as SettingsIcon, Home as HomeIcon, ListTodo, X, StopCircle } from 'lucide-react';
+import { Sun, Moon, Settings as SettingsIcon, Home as HomeIcon, ListTodo, X } from 'lucide-react';
 import Home from './pages/Home';
 import Tasks from './pages/Tasks';
+import { useProjects } from './hooks/useProjects';
+import { useTasks } from './hooks/useTasks';
 import { useTracking } from './hooks/useTracking';
 
 function App() {
@@ -21,8 +23,10 @@ function App() {
     const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem("tasks")) || []);
     const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem("logs")) || []);
 
-    // Initialize tracking logic
+    // Centralized Logic Hooks
     const { activeSession, startTrace, stopTrace } = useTracking(logs, setLogs, triggerToast);
+    const projectLogic = useProjects(projects, setProjects, logs, triggerToast);
+    const taskLogic = useTasks(tasks, setTasks, triggerToast);
 
     // Persistence
     useEffect(() => {
@@ -64,8 +68,8 @@ function App() {
 
             {/* Main Content */}
             <Routes>
-                <Route path="/" element={<Home projects={projects} setProjects={setProjects} logs={logs} setLogs={setLogs} triggerToast={triggerToast} isManageMode={isManageMode} startTrace={startTrace} stopTrace={stopTrace} activeSession={activeSession} />} />
-                <Route path="/tasks" element={<Tasks projects={projects} tasks={tasks} setTasks={setTasks} />} />
+                <Route path="/" element={<Home projects={projects} logs={logs} isManageMode={isManageMode} startTrace={startTrace} stopTrace={stopTrace} activeSession={activeSession} {...projectLogic} />} />
+                <Route path="/tasks" element={<Tasks tasks={tasks} isManageMode={isManageMode} {...taskLogic} />} />
             </Routes>
 
             {/* Toast Container */}
