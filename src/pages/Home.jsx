@@ -7,7 +7,7 @@ import { Download } from 'lucide-react';
 
 export default function Home({ 
     projects, tasks, logs, triggerToast, isManageMode, 
-    startTrace, stopTrace, activeSession, onUpdateActiveTask, // Added handler
+    startTrace, stopTrace, activeSession, onUpdateActiveTask,
     handleSaveProject, handleDeleteProject, handleExport, handleImport, handleReorder,
     handleClearProjectLogs, getProjectDailyTotal, handleUpdateLogTask 
 }) {
@@ -15,10 +15,10 @@ export default function Home({
     <div className="grow p-6 flex flex-col items-center">
       <div className="w-[85%] max-w-4xl flex flex-col gap-4">
         <div className="flex justify-between items-center mb-2">
-          <h1 className="text-2xl font-bold">Your Projects</h1>
+          <h1 className="page-title">Your Projects</h1>
           {isManageMode && (
             <button onClick={handleExport} className="btn btn-ghost btn-sm gap-2">
-              <Download size={18} /> Export JSON
+              <Download size={18} /> <span className="status-text font-bold">Export JSON</span>
             </button>
           )}
         </div>

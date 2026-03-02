@@ -38,7 +38,7 @@ export default function ProjectCard({
                 className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-base-content/20 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all group gap-2 w-full h-23"
             >
                 <Plus className="text-base-content/30 group-hover:text-primary" size={32} />
-                <span className="text-sm font-medium text-base-content/30 group-hover:text-primary">Add project</span>
+                <span className="action-label group-hover:text-primary">Add project</span>
             </button>
         );
     }
@@ -109,8 +109,12 @@ export default function ProjectCard({
                     <LucideIcon size={24} />
                 </div>
                 <div className="grow">
-                    <h3 className="font-bold text-lg leading-tight">{project.name}</h3>
-                    <p className="text-xs opacity-50">{isManageMode ? 'Manage project data' : isActive ? 'Currently tracking...' : 'Ready to focus?'}</p>
+                    <h3 className="project-card-title">{project.name}</h3>
+                    { (isManageMode || isActive) && (
+                        <p className="status-text">
+                            {isManageMode ? 'Manage project data' : 'Currently tracking...'}
+                        </p>
+                    )}
                 </div>
                 <div className="flex flex-col items-end justify-center gap-2 shrink-0 h-full">
                     {isManageMode ? (
@@ -138,16 +142,14 @@ export default function ProjectCard({
                         <div className="flex flex-col gap-1 grow">
                             <div className="flex items-center gap-2 text-xs font-medium">
                                 <Clock size={14} className={isActive ? "text-primary animate-pulse" : "opacity-40"} />
-                                <span className={isActive ? "text-primary font-bold" : "opacity-40"}>{isActive ? "Live Session" : "No Active Session"}</span>
+                                <span className={isActive ? "text-primary font-bold" : "status-text"}>{isActive ? "Live Session" : "No Active Session"}</span>
                             </div>
                             {isActive && (
                                 <select 
-                                    className="select select-ghost select-xs p-0 h-auto min-h-0 font-medium text-primary focus:bg-transparent focus:outline-none w-fit"
+                                    /* Removed h-auto and min-h-0 so the CSS h-11/text-base works */
+                                    className="select select-ghost select-xs font-bold text-primary focus:bg-transparent focus:outline-none min-w-40 px-2"
                                     value={activeSession.taskId || ""}
-                                    onChange={(e) => {
-                                        //console.log("Live task selection:", e.target.value);
-                                        onUpdateActiveTask(e.target.value);
-                                    }}
+                                    onChange={(e) => onUpdateActiveTask(e.target.value)}
                                 >
                                     <option value="">Tag a task...</option>
                                     {tasks.map(t => (

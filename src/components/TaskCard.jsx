@@ -20,7 +20,7 @@ export default function TaskCard({
                 className="flex flex-col items-center justify-center p-6 border-2 border-dashed border-base-content/20 rounded-2xl hover:border-primary hover:bg-primary/5 transition-all group gap-2 w-full h-23"
             >
                 <Plus className="text-base-content/30 group-hover:text-primary" size={32} />
-                <span className="text-sm font-medium text-base-content/30 group-hover:text-primary">Add task</span>
+                <span className="action-label group-hover:text-primary">Add task</span>
             </button>
         );
     }
@@ -64,8 +64,8 @@ export default function TaskCard({
                 {task.completed ? <CheckCircle2 size={24} /> : <Circle size={24} />}
             </button>
             <div className="grow">
-                <h3 className={`font-bold text-lg leading-tight ${task.completed ? 'line-through' : ''}`}>{task.text}</h3>
-                <p className="text-xs opacity-50">{task.completed ? 'Done' : `Task ID: ${task.id.slice(-4)}`}</p>
+                <h3 className={`project-card-title ${task.completed ? 'line-through' : ''}`}>{task.text}</h3>
+                <p className="status-text">{task.completed ? 'Done' : `Task ID: ${task.id.slice(-4)}`}</p>
             </div>
             {isManageMode && (
                 <button 
