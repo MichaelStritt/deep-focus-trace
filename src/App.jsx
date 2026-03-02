@@ -1,6 +1,6 @@
 /* Path: src/App.jsx */
 import React, { useEffect, useState } from 'react';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Settings } from 'lucide-react';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -18,9 +18,16 @@ function App() {
     <div className="h-screen flex flex-col bg-base-100 text-base-content transition-colors duration-300">
       
       {/* Header Bar */}
-      <div className="w-full p-4 flex justify-end bg-transparent">
+      <div className="w-full p-4 flex justify-end items-center gap-2 bg-transparent">
+
+        {/* Theme Toggle */}
         <button onClick={toggleTheme} className="btn btn-outline btn-circle">
           {theme === "light" ? <Moon size={24} /> : <Sun size={24} />}
+        </button>
+        
+        {/* Settings */}
+        <button className="btn btn-outline btn-circle">
+          <Settings size={24} />
         </button>
       </div>
 
