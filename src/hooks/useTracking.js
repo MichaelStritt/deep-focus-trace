@@ -18,14 +18,6 @@ export const useTracking = (logs, setLogs, triggerToast) => {
         const startTime = new Date(activeSession.startTime);
         const durationMs = endTime - startTime;
 
-        // DEBUG LOGS
-        console.group(`Timer Debug: ${activeSession.projectName}`);
-        console.log("Start ISO:", activeSession.startTime);
-        console.log("End ISO:", endTime.toISOString());
-        console.log("Diff (ms):", durationMs);
-        console.log("Diff (min):", Math.floor(durationMs / 60000));
-        console.groupEnd();
-
         const newLog = {
             id: Date.now().toString(),
             projectId: activeSession.projectId,
