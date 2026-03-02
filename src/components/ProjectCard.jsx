@@ -1,14 +1,15 @@
 /* Path: src/components/ProjectCard.jsx */
 import React, { useState } from 'react';
 import * as Icons from 'lucide-react';
-import { Save, X, Plus } from 'lucide-react';
+import { Save, X, Plus, Trash2 } from 'lucide-react';
 
 export default function ProjectCard({ 
   project, 
   isPlaceholder, 
   onSave, 
   onClick, 
-  dailyTotal = "0h 0m" 
+  dailyTotal = "0h 0m",
+  isManageMode = false 
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState('');
@@ -48,7 +49,6 @@ export default function ProjectCard({
 
     return (
       <div className="flex items-center p-4 bg-base-200 border-2 border-dashed border-primary rounded-2xl gap-4 w-full">
-        {/* Clickable Icon to Cycle */}
         <button 
           onClick={cycleIcon}
           className="p-3 bg-primary/10 rounded-xl text-primary shrink-0 hover:bg-primary/20 transition-colors"
@@ -80,20 +80,29 @@ export default function ProjectCard({
   // 3. Standard Display State
   const LucideIcon = Icons[project.icon] || Icons.Briefcase;
   return (
-    <div className="flex items-center p-4 bg-base-200 border-2 border-transparent rounded-2xl shadow-sm hover:shadow-md transition-all gap-4 w-full">
-      <div className="p-3 bg-primary/10 rounded-xl text-primary shrink-0">
+    <div 
+      className={`relative flex items-center p-4 bg-base-200 border-2 rounded-2xl shadow-sm transition-all gap-4 w-full h-[92px] ${
+        isManageMode ? 'border-error/20' : 'border-transparent hover:shadow-md'
+      }`}
+    >
+      <div className={`p-3 rounded-xl shrink-0 ${isManageMode ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary'}`}>
         <LucideIcon size={24} />
       </div>
       <div className="grow">
         <h3 className="font-bold text-lg leading-tight">{project.name}</h3>
-        <p className="text-xs opacity-50">Ready to focus?</p>
+        <p className="text-xs opacity-50">{isManageMode ? 'Delete this project?' : 'Ready to focus?'}</p>
       </div>
-      <div className="flex flex-col items-end gap-2 shrink-0">
-        <span className="text-xs font-mono opacity-60 bg-base-300 px-2 py-1 rounded-lg">
-          {dailyTotal}
-        </span>
-        <button className="btn btn-primary btn-sm" onClick={() => onClick(project.id)}>
-          Start Trace
+      <div className="flex flex-col items-end justify-center gap-2 shrink-0 h-full">
+        {!isManageMode && (
+          <span className="text-xs font-mono opacity-60 bg-base-300 px-2 py-1 rounded-lg">
+            {dailyTotal}
+          </span>
+        )}
+        <button 
+          className={`btn btn-sm ${isManageMode ? 'btn-error btn-outline' : 'btn-primary'}`} 
+          onClick={() => onClick(project.id)}
+        >
+          {isManageMode ? <Trash2 size={18} /> : 'Start Trace'}
         </button>
       </div>
     </div>

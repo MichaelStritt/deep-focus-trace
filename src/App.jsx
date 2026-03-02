@@ -1,15 +1,15 @@
 /* Path: src/App.jsx */
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router';
-import { Sun, Moon, Settings as SettingsIcon, Home as HomeIcon, ListTodo } from 'lucide-react';
+import { Sun, Moon, Settings as SettingsIcon, Home as HomeIcon, ListTodo, X } from 'lucide-react';
 import Home from './pages/Home';
-import Settings from './pages/Settings';
 import Tasks from './pages/Tasks';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const location = useLocation();
   const [toast, setToast] = useState(null);
+  const [isManageMode, setIsManageMode] = useState(false);
 
   const triggerToast = (message) => {
     console.log(`${message}`);
@@ -19,7 +19,6 @@ function App() {
     }, 3000);
   };
 
-  // Project, Task, and Log State
   const [projects, setProjects] = useState(() => JSON.parse(localStorage.getItem("projects")) || []);
   const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem("tasks")) || []);
   const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem("logs")) || []);
@@ -29,7 +28,6 @@ function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Sync Data to LocalStorage
   useEffect(() => {
     localStorage.setItem("projects", JSON.stringify(projects));
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -46,12 +44,10 @@ function App() {
       {/* Header Bar */}
       <div className="w-full p-4 flex justify-end items-center gap-2 bg-transparent">
 
-        {/* Theme Toggle */}
         <button onClick={toggleTheme} className="btn btn-outline btn-circle">
           {theme === "light" ? <Moon size={24} /> : <Sun size={24} />}
         </button>
 
-        {/* Tasks / Home Toggle */}
         {location.pathname === '/tasks' ? (
           <Link to="/" className="btn btn-outline btn-circle">
             <HomeIcon size={24} />
@@ -62,22 +58,18 @@ function App() {
           </Link>
         )}
         
-        {/* Settings / Home Toggle */}
-        {location.pathname === '/settings' ? (
-          <Link to="/" className="btn btn-outline btn-circle">
-            <HomeIcon size={24} />
-          </Link>
-        ) : (
-          <Link to="/settings" className="btn btn-outline btn-circle">
-            <SettingsIcon size={24} />
-          </Link>
-        )}
+        {/* Management Toggle - Replaces Settings Link */}
+        <button 
+          onClick={() => setIsManageMode(!isManageMode)} 
+          className={`btn btn-circle ${isManageMode ? 'btn-error text-white' : 'btn-outline'}`}
+        >
+          {isManageMode ? <X size={24} /> : <SettingsIcon size={24} />}
+        </button>
       </div>
 
       {/* Main Content */}
       <Routes>
-        <Route path="/" element={<Home projects={projects} setProjects={setProjects} logs={logs} triggerToast={triggerToast} />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/" element={<Home projects={projects} setProjects={setProjects} logs={logs} triggerToast={triggerToast} isManageMode={isManageMode} />} />
         <Route path="/tasks" element={<Tasks projects={projects} tasks={tasks} setTasks={setTasks} />} />
       </Routes>
 
