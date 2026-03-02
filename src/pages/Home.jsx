@@ -4,15 +4,13 @@ import ProjectList from '../components/ProjectList';
 import ProjectCard from '../components/ProjectCard';
 import ProjectImport from '../components/ProjectImport';
 import { Download } from 'lucide-react';
-import { useLogs } from '../hooks/useLogs';
 
 export default function Home({ 
-    projects, logs, setLogs, triggerToast, isManageMode, 
+    projects, tasks, logs, triggerToast, isManageMode, 
     startTrace, stopTrace, activeSession,
-    handleSaveProject, handleDeleteProject, handleExport, handleImport, handleReorder 
+    handleSaveProject, handleDeleteProject, handleExport, handleImport, handleReorder,
+    handleClearProjectLogs, getProjectDailyTotal, handleUpdateLogTask 
 }) {
-  const { handleClearProjectLogs, getProjectDailyTotal } = useLogs(logs, setLogs, triggerToast);
-
   return (
     <div className="grow p-6 flex flex-col items-center">
       <div className="w-[85%] max-w-4xl flex flex-col gap-4">
@@ -27,6 +25,7 @@ export default function Home({
         
         <ProjectList 
             projects={projects}
+            tasks={tasks}
             logs={logs}
             getProjectDailyTotal={getProjectDailyTotal}
             isManageMode={isManageMode}
@@ -34,6 +33,7 @@ export default function Home({
             onReorder={handleReorder}
             onDelete={handleDeleteProject}
             onClearLogs={handleClearProjectLogs}
+            onUpdateLogTask={handleUpdateLogTask}
             onStartTrace={startTrace} 
             onStopTrace={stopTrace}
         />

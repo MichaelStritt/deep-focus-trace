@@ -7,6 +7,7 @@ import Tasks from './pages/Tasks';
 import { useProjects } from './hooks/useProjects';
 import { useTasks } from './hooks/useTasks';
 import { useTracking } from './hooks/useTracking';
+import { useLogs } from './hooks/useLogs';
 
 function App() {
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -27,6 +28,7 @@ function App() {
     const { activeSession, startTrace, stopTrace } = useTracking(logs, setLogs, triggerToast);
     const projectLogic = useProjects(projects, setProjects, logs, triggerToast);
     const taskLogic = useTasks(tasks, setTasks, triggerToast);
+    const logLogic = useLogs(logs, setLogs, triggerToast);
 
     // Persistence
     useEffect(() => {
@@ -68,7 +70,7 @@ function App() {
 
             {/* Main Content */}
             <Routes>
-                <Route path="/" element={<Home projects={projects} logs={logs} isManageMode={isManageMode} startTrace={startTrace} stopTrace={stopTrace} activeSession={activeSession} {...projectLogic} />} />
+                <Route path="/" element={<Home projects={projects} tasks={tasks} logs={logs} isManageMode={isManageMode} startTrace={startTrace} stopTrace={stopTrace} activeSession={activeSession} {...projectLogic} {...logLogic} />} />
                 <Route path="/tasks" element={<Tasks tasks={tasks} isManageMode={isManageMode} {...taskLogic} />} />
             </Routes>
 

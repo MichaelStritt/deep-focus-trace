@@ -5,11 +5,13 @@ import { Save, X, Plus, Trash2, Eraser, ChevronDown, Clock } from 'lucide-react'
 
 export default function ProjectCard({ 
     project, 
+    tasks = [],
     logs = [],
     isPlaceholder, 
     onSave, 
     onClick, 
     onClearLogs,
+    onUpdateLogTask,
     onStart,
     onStop,
     activeSession,
@@ -25,9 +27,7 @@ export default function ProjectCard({
     const iconList = ['Book', 'FlaskConical', 'Briefcase', 'Code', 'Car', 'Zap', 'Music', 'Coffee', 'Sun'];
     const [iconIndex, setIconIndex] = useState(0);
 
-    const cycleIcon = () => {
-        setIconIndex((prev) => (prev + 1) % iconList.length);
-    };
+    const cycleIcon = () => setIconIndex((prev) => (prev + 1) % iconList.length);
 
     // 1. Placeholder State
     if (isPlaceholder && !isEditing) {
@@ -75,11 +75,9 @@ export default function ProjectCard({
         );
     }
 
-    // Logic for existing projects
     const isActive = activeSession?.projectId === project.id;
     const isOtherActive = activeSession && !isActive;
 
-    // Filter today's logs for this project
     const today = new Date().toISOString().split('T')[0];
     const projectLogs = logs
         .filter(log => log.projectId === project.id && log.startTime.startsWith(today))
@@ -90,10 +88,10 @@ export default function ProjectCard({
         if (isActive && isExpanded) {
             const updateTicker = () => {
                 const diff = new Date() - new Date(activeSession.startTime);
-                const h = Math.floor(diff / 3600000);
-                const m = Math.floor((diff % 3600000) / 60000);
-                const s = Math.floor((diff % 60000) / 1000);
-                setElapsed(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+                const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+                const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                setElapsed(`${h}:${m}:${s}`);
             };
             updateTicker();
             interval = setInterval(updateTicker, 1000);
@@ -135,13 +133,25 @@ export default function ProjectCard({
             {isExpanded && (
                 <div className="mt-2 pt-2 border-t border-base-content/5 flex flex-col gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
                     {/* Live Section */}
-                    <div className="flex justify-between items-center bg-base-300/30 p-3 rounded-xl">
-                        <div className="flex items-center gap-2 text-xs font-medium">
-                            <Clock size={14} className={isActive ? "text-primary animate-pulse" : "opacity-40"} />
-                            <span className={isActive ? "text-primary font-bold" : "opacity-40"}>{isActive ? "Live Session" : "No Active Session"}</span>
+                    <div className="flex justify-between items-center bg-base-300/30 p-3 rounded-xl gap-4">
+                        <div className="flex flex-col gap-1 grow">
+                            <div className="flex items-center gap-2 text-xs font-medium">
+                                <Clock size={14} className={isActive ? "text-primary animate-pulse" : "opacity-40"} />
+                                <span className={isActive ? "text-primary font-bold" : "opacity-40"}>{isActive ? "Live Session" : "No Active Session"}</span>
+                            </div>
+                            {isActive && (
+                                <select 
+                                    className="select select-ghost select-xs p-0 h-auto min-h-0 font-medium text-primary focus:bg-transparent focus:outline-none w-fit"
+                                    value={activeSession.taskId || ""}
+                                    onChange={(e) => onUpdateLogTask(activeSession.id, e.target.value)}
+                                >
+                                    <option value="">Tag a task...</option>
+                                    {tasks.map(t => <option key={t.id} value={t.id}>{t.completed ? '✓ ' : ''}{t.text}</option>)}
+                                </select>
+                            )}
                         </div>
                         {isActive && (
-                            <div className="flex flex-col items-end">
+                            <div className="flex flex-col items-end shrink-0">
                                 <span className="text-sm font-mono font-bold text-primary">{elapsed}</span>
                                 <span className="text-[10px] opacity-50 font-mono text-primary">Started: {new Date(activeSession.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
@@ -153,11 +163,21 @@ export default function ProjectCard({
                         <span className="text-[10px] uppercase font-black tracking-widest opacity-30">Today's History</span>
                         {projectLogs.length > 0 ? (
                             projectLogs.map(log => (
-                                <div key={log.id} className="flex justify-between items-center text-xs py-1 border-b border-base-content/5 last:border-0">
-                                    <span className="opacity-60 font-mono">
-                                        {new Date(log.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} – {new Date(log.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
-                                    <span className="font-bold opacity-80">{Math.floor(log.durationMs / 60000)}m</span>
+                                <div key={log.id} className="flex justify-between items-center text-xs py-3 border-b border-base-content/5 last:border-0 min-h-14">
+                                    <div className="flex flex-col gap-1 grow">
+                                        <span className="opacity-60 font-mono">
+                                            {new Date(log.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} – {new Date(log.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                        <select 
+                                            className="select select-ghost select-xs p-0 h-auto min-h-0 font-medium text-primary focus:bg-transparent focus:outline-none w-fit"
+                                            value={log.taskId || ""}
+                                            onChange={(e) => onUpdateLogTask(log.id, e.target.value)}
+                                        >
+                                            <option value="">No task assigned</option>
+                                            {tasks.map(t => <option key={t.id} value={t.id}>{t.completed ? '✓ ' : ''}{t.text}</option>)}
+                                        </select>
+                                    </div>
+                                    <span className="font-bold opacity-80 shrink-0">{Math.floor(log.durationMs / 60000)}m</span>
                                 </div>
                             ))
                         ) : (

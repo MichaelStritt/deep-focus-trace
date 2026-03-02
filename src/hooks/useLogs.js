@@ -18,5 +18,15 @@ export const useLogs = (logs, setLogs, triggerToast) => {
         triggerToast(`Cleared logs for ${projectName}`);
     };
 
-    return { handleClearProjectLogs, getProjectDailyTotal };
+    const handleUpdateLogTask = (logId, taskId) => {
+        setLogs(prevLogs => prevLogs.map(log => 
+            log.id === logId ? { ...log, taskId } : log
+        ));
+    };
+
+    return { 
+        handleClearProjectLogs, 
+        getProjectDailyTotal, 
+        handleUpdateLogTask 
+    };
 };
