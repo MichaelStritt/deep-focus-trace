@@ -9,6 +9,9 @@ export default function ProjectCard({
     onSave, 
     onClick, 
     onClearLogs,
+    onStart,
+    onStop,
+    activeSession,
     dailyTotal = "0h 0m",
     isManageMode = false 
 }) {
@@ -81,34 +84,35 @@ export default function ProjectCard({
 
     // 3. Standard Display State
     const LucideIcon = Icons[project.icon] || Icons.Briefcase;
+
+    // Determine tracking state
+    const isActive = activeSession?.projectId === project.id;
+    const isOtherActive = activeSession && !isActive;
+
     return (
     <div 
         className={`relative flex items-center p-4 bg-base-200 border-2 rounded-2xl shadow-sm transition-all gap-4 w-full h-23 ${
-        isManageMode ? 'border-error/20' : 'border-transparent hover:shadow-md'
+        isActive ? 'border-primary/50 bg-primary/5' : isManageMode ? 'border-error/20' : 'border-transparent hover:shadow-md'
         }`}
     >
         <div className={`p-3 rounded-xl shrink-0 ${isManageMode ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary'}`}>
         <LucideIcon size={24} />
         </div>
+
         <div className="grow">
         <h3 className="font-bold text-lg leading-tight">{project.name}</h3>
-        <p className="text-xs opacity-50">{isManageMode ? 'Manage project data' : 'Ready to focus?'}</p>
+        <p className="text-xs opacity-50">
+            {isManageMode ? 'Manage project data' : isActive ? 'Currently tracking...' : 'Ready to focus?'}
+        </p>
         </div>
+
         <div className="flex flex-col items-end justify-center gap-2 shrink-0 h-full">
         {isManageMode ? (
             <div className="flex gap-2">
-            <button 
-                className="btn btn-sm btn-ghost text-warning hover:bg-warning/10"
-                onClick={() => onClearLogs(project.id, project.name)}
-                title="Clear all logs"
-            >
+            <button className="btn btn-sm btn-ghost text-warning hover:bg-warning/10" onClick={() => onClearLogs(project.id, project.name)} title="Clear all logs">
                 <Eraser size={18} />
             </button>
-            <button 
-                className="btn btn-sm btn-error btn-outline" 
-                onClick={() => onClick(project.id)}
-                title="Delete project"
-            >
+            <button className="btn btn-sm btn-error btn-outline" onClick={() => onClick(project.id)} title="Delete project">
                 <Trash2 size={18} />
             </button>
             </div>
@@ -118,10 +122,11 @@ export default function ProjectCard({
                 {dailyTotal}
             </span>
             <button 
-                className="btn btn-sm btn-primary" 
-                onClick={() => onClick(project.id)}
+                // Width fixed to w-20 to prevent layout shift between "Start/Stop/Switch"
+                className={`btn btn-sm w-20 ${isActive ? 'btn-error' : isOtherActive ? 'btn-outline btn-primary' : 'btn-primary'}`} 
+                onClick={() => isActive ? onStop() : onStart(project.id, project.name)}
             >
-                Start Trace
+                {isActive ? 'Stop' : isOtherActive ? 'Switch' : 'Start'}
             </button>
             </>
         )}

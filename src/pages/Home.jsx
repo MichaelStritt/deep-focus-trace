@@ -5,15 +5,13 @@ import ProjectCard from '../components/ProjectCard';
 import ProjectImport from '../components/ProjectImport';
 import { Download } from 'lucide-react';
 import { useProjects } from '../hooks/useProjects';
+import { useLogs } from '../hooks/useLogs';
 
-export default function Home({ projects, setProjects, triggerToast, isManageMode }) {
-  const { 
-    handleSaveProject, 
-    handleDeleteProject, 
-    handleExport, 
-    handleImport, 
-    handleReorder 
-  } = useProjects(projects, setProjects, triggerToast);
+export default function Home({ projects, setProjects, logs, setLogs, triggerToast, isManageMode, startTrace }) {
+  const { handleSaveProject, handleDeleteProject, handleExport, handleImport, handleReorder } = 
+    useProjects(projects, setProjects, logs, triggerToast);
+    
+  const { handleClearProjectLogs } = useLogs(logs, setLogs, triggerToast);
 
   return (
     <div className="grow p-6 flex flex-col items-center">
@@ -32,7 +30,8 @@ export default function Home({ projects, setProjects, triggerToast, isManageMode
           isManageMode={isManageMode}
           onReorder={handleReorder}
           onDelete={handleDeleteProject}
-          onStartTrace={(id) => console.log("Start Trace:", id)}
+          onClearLogs={handleClearProjectLogs}
+          onStartTrace={(id, name) => startTrace(id, name)}
         />
 
         {!isManageMode ? (
