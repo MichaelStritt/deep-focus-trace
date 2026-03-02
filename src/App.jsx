@@ -10,10 +10,22 @@ function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const location = useLocation();
 
+  // Project, Task, and Log State
+  const [projects, setProjects] = useState(() => JSON.parse(localStorage.getItem("projects")) || []);
+  const [tasks, setTasks] = useState(() => JSON.parse(localStorage.getItem("tasks")) || []);
+  const [logs, setLogs] = useState(() => JSON.parse(localStorage.getItem("logs")) || []);
+
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  // Sync Data to LocalStorage
+  useEffect(() => {
+    localStorage.setItem("projects", JSON.stringify(projects));
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem("logs", JSON.stringify(logs));
+  }, [projects, tasks, logs]);
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -55,9 +67,9 @@ function App() {
 
       {/* Main Content */}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home projects={projects} logs={logs} />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/tasks" element={<Tasks />} />
+        <Route path="/tasks" element={<Tasks projects={projects} tasks={tasks} setTasks={setTasks} />} />
       </Routes>
       
     </div>
