@@ -15,14 +15,21 @@ function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-base-100 gap-4 text-base-content transition-colors duration-300">
-      <h1 className="text-2xl font-bold">Theme Test</h1>
+    <div className="h-screen flex flex-col bg-base-100 text-base-content transition-colors duration-300">
       
-      <button onClick={toggleTheme} className="btn btn-outline btn-circle">
-        {theme === "light" ? <Moon size={24} /> : <Sun size={24} />}
-      </button>
+      {/* Header Bar */}
+      <div className="w-full p-4 flex justify-end bg-transparent">
+        <button onClick={toggleTheme} className="btn btn-outline btn-circle">
+          {theme === "light" ? <Moon size={24} /> : <Sun size={24} />}
+        </button>
+      </div>
 
-      <button className="btn btn-primary">Action Button</button>
+      {/* Main Content */}
+      <div className="flex-grow flex flex-col items-center justify-center gap-4">
+        <h1 className="text-2xl font-bold">Theme Test</h1>
+        <button className="btn btn-primary">Action Button</button>
+      </div>
+      
     </div>
   );
 }
