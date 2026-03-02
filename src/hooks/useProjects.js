@@ -21,14 +21,20 @@ export const useProjects = (projects, setProjects, triggerToast) => {
   };
 
   const handleExport = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
+    // Create a backup object containing both datasets
+    const backupData = {
+      projects: projects,
+      logs: logs || []
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "projects_backup.json");
+    downloadAnchorNode.setAttribute("download", `focus_trace_backup_${new Date().toISOString().split('T')[0]}.json`);
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
-    triggerToast("Projects exported!");
+    triggerToast("Backup exported with logs!");
   };
 
   const handleImport = (importedData) => {
