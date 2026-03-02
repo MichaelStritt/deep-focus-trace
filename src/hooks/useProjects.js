@@ -1,5 +1,5 @@
 /* Path: src/hooks/useProjects.js */
-export const useProjects = (projects, setProjects, triggerToast) => {
+export const useProjects = (projects, setProjects, logs, triggerToast) => {
   
   const handleSaveProject = (name, icon) => {
     const projectToAdd = { 
