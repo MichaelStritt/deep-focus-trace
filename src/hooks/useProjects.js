@@ -2,13 +2,21 @@
 export const useProjects = (projects, setProjects, triggerToast) => {
   
   const handleSaveProject = (name, icon) => {
-    const projectToAdd = { id: Date.now().toString(), name, icon: icon || 'Book' };
+    const projectToAdd = { 
+      id: Date.now().toString(), 
+      name, 
+      icon: icon || 'Book',
+      index: projects.length 
+    };
     setProjects([...projects, projectToAdd]);
     triggerToast("Project added successfully!");
   };
 
   const handleDeleteProject = (id) => {
-    setProjects(projects.filter(p => p.id !== id));
+    const filtered = projects.filter(p => p.id !== id);
+    // Normalize indices to prevent gaps
+    const normalized = filtered.map((p, i) => ({ ...p, index: i }));
+    setProjects(normalized);
     triggerToast("Project removed.");
   };
 
@@ -25,16 +33,41 @@ export const useProjects = (projects, setProjects, triggerToast) => {
 
   const handleImport = (importedData) => {
     const existingIds = new Set(projects.map(p => p.id));
-    const newProjects = importedData.filter(p => !existingIds.has(p.id));
-    const skipCount = importedData.length - newProjects.length;
+    const newItems = importedData.filter(p => !existingIds.has(p.id));
+    const skipCount = importedData.length - newItems.length;
 
-    if (newProjects.length > 0) {
-      setProjects([...projects, ...newProjects]);
-      triggerToast(`Imported ${newProjects.length} projects.${skipCount > 0 ? ` Skipped ${skipCount} duplicates.` : ''}`);
+    if (newItems.length > 0) {
+      // Append new items and re-index the entire resulting array
+      const combined = [...projects, ...newItems];
+      const normalized = combined.map((p, i) => ({ ...p, index: i }));
+      
+      setProjects(normalized);
+      triggerToast(`Imported ${newItems.length} projects.${skipCount > 0 ? ` Skipped ${skipCount} duplicates.` : ''}`);
     } else if (skipCount > 0) {
       triggerToast("No new projects found.");
     }
   };
 
-  return { handleSaveProject, handleDeleteProject, handleExport, handleImport };
+  const handleReorder = (result) => {
+    // dropped outside the list
+    if (!result.destination) return;
+    // position hasn't changed
+    if (result.destination.index === result.source.index) return;
+
+    const items = Array.from(projects);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    // Re-normalize indices to match new array order
+    const normalized = items.map((p, i) => ({ ...p, index: i }));
+    setProjects(normalized);
+  };
+
+  return { 
+    handleSaveProject, 
+    handleDeleteProject, 
+    handleExport, 
+    handleImport, 
+    handleReorder 
+  };
 };

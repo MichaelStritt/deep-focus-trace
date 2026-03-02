@@ -1,13 +1,19 @@
 /* Path: src/pages/Home.jsx */
 import React from 'react';
+import ProjectList from '../components/ProjectList';
 import ProjectCard from '../components/ProjectCard';
 import ProjectImport from '../components/ProjectImport';
 import { Download } from 'lucide-react';
 import { useProjects } from '../hooks/useProjects';
 
-export default function Home({ projects, setProjects, logs, triggerToast, isManageMode }) {
-  const { handleSaveProject, handleDeleteProject, handleExport, handleImport } = 
-    useProjects(projects, setProjects, triggerToast);
+export default function Home({ projects, setProjects, triggerToast, isManageMode }) {
+  const { 
+    handleSaveProject, 
+    handleDeleteProject, 
+    handleExport, 
+    handleImport, 
+    handleReorder 
+  } = useProjects(projects, setProjects, triggerToast);
 
   return (
     <div className="grow p-6 flex flex-col items-center">
@@ -21,15 +27,13 @@ export default function Home({ projects, setProjects, logs, triggerToast, isMana
           )}
         </div>
         
-        {projects.map((project) => (
-          <ProjectCard 
-            key={project.id} 
-            project={project} 
-            onClick={isManageMode ? () => handleDeleteProject(project.id) : (id) => console.log("Start Trace:", id)} 
-            dailyTotal="0h 0m"
-            isManageMode={isManageMode}
-          />
-        ))}
+        <ProjectList 
+          projects={projects}
+          isManageMode={isManageMode}
+          onReorder={handleReorder}
+          onDelete={handleDeleteProject}
+          onStartTrace={(id) => console.log("Start Trace:", id)}
+        />
 
         {!isManageMode ? (
           <ProjectCard isPlaceholder onSave={handleSaveProject} />
