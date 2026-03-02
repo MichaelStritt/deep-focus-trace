@@ -1,9 +1,10 @@
 /* Path: src/App.jsx */
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router';
-import { Sun, Moon, Settings as SettingsIcon, Home as HomeIcon } from 'lucide-react'; 
+import { Sun, Moon, Settings as SettingsIcon, Home as HomeIcon, ListTodo } from 'lucide-react';
 import Home from './pages/Home';
 import Settings from './pages/Settings';
+import Tasks from './pages/Tasks';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
@@ -28,6 +29,17 @@ function App() {
         <button onClick={toggleTheme} className="btn btn-outline btn-circle">
           {theme === "light" ? <Moon size={24} /> : <Sun size={24} />}
         </button>
+
+        {/* Tasks / Home Toggle */}
+        {location.pathname === '/tasks' ? (
+          <Link to="/" className="btn btn-outline btn-circle">
+            <HomeIcon size={24} />
+          </Link>
+        ) : (
+          <Link to="/tasks" className="btn btn-outline btn-circle">
+            <ListTodo size={24} />
+          </Link>
+        )}
         
         {/* Settings / Home Toggle */}
         {location.pathname === '/settings' ? (
@@ -45,6 +57,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/tasks" element={<Tasks />} />
       </Routes>
       
     </div>
