@@ -5,6 +5,8 @@ import ProjectCard from './ProjectCard';
 
 export default function ProjectList({ 
     projects, 
+    logs,
+    getProjectDailyTotal,
     isManageMode, 
     onReorder, 
     onDelete, 
@@ -31,13 +33,14 @@ export default function ProjectList({
                     >
                     <ProjectCard 
                         project={project}
+                        logs={logs}
                         activeSession={activeSession}
                         isManageMode={isManageMode}
                         onStart={onStartTrace}
                         onStop={onStopTrace}
                         onClick={onDelete}
                         onClearLogs={onClearLogs}
-                        dailyTotal="0h 0m" 
+                        dailyTotal={getProjectDailyTotal(project.id)}
                     />
                     </div>
                 )}

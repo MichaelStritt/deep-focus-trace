@@ -14,8 +14,8 @@ export default function Home({ projects, setProjects, logs, setLogs, triggerToas
   const { handleSaveProject, handleDeleteProject, handleExport, handleImport, handleReorder } = 
     useProjects(projects, setProjects, logs, triggerToast);
     
-  const { handleClearProjectLogs } = useLogs(logs, setLogs, triggerToast);
-
+  const { handleClearProjectLogs, getProjectDailyTotal } = useLogs(logs, setLogs, triggerToast);
+  
   return (
     <div className="grow p-6 flex flex-col items-center">
       <div className="w-[85%] max-w-4xl flex flex-col gap-4">
@@ -30,6 +30,7 @@ export default function Home({ projects, setProjects, logs, setLogs, triggerToas
         
         <ProjectList 
             projects={projects}
+            getProjectDailyTotal={getProjectDailyTotal}
             isManageMode={isManageMode}
             activeSession={activeSession}
             onReorder={handleReorder}

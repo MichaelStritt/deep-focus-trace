@@ -1,11 +1,22 @@
 /* Path: src/hooks/useLogs.js */
 export const useLogs = (logs, setLogs, triggerToast) => {
-  
-  const handleClearProjectLogs = (projectId, projectName) => {
-    const updatedLogs = logs.filter(log => log.projectId !== projectId);
-    setLogs(updatedLogs);
-    triggerToast(`Cleared all logs for ${projectName}.`);
-  };
+    
+    const getProjectDailyTotal = (projectId) => {
+        const today = new Date().toISOString().split('T')[0];
+        
+        const ms = logs
+            .filter(log => log.projectId === projectId && log.startTime.startsWith(today))
+            .reduce((sum, log) => sum + (log.durationMs || 0), 0);
 
-  return { handleClearProjectLogs };
+        const hours = Math.floor(ms / 3600000);
+        const minutes = Math.floor((ms % 3600000) / 60000);
+        return `${hours}h ${minutes}m`;
+    };
+
+    const handleClearProjectLogs = (projectId, projectName) => {
+        setLogs(prev => prev.filter(log => log.projectId !== projectId));
+        triggerToast(`Cleared logs for ${projectName}`);
+    };
+
+    return { handleClearProjectLogs, getProjectDailyTotal };
 };

@@ -1,10 +1,11 @@
 /* Path: src/components/ProjectCard.jsx */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Icons from 'lucide-react';
 import { Save, X, Plus, Trash2, Eraser, ChevronDown, Clock } from 'lucide-react';
 
 export default function ProjectCard({ 
     project, 
+    logs = [],
     isPlaceholder, 
     onSave, 
     onClick, 
@@ -18,6 +19,7 @@ export default function ProjectCard({
     const [isEditing, setIsEditing] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [name, setName] = useState('');
+    const [elapsed, setElapsed] = useState("00:00:00");
 
     // Icon cycling logic
     const iconList = ['Book', 'FlaskConical', 'Briefcase', 'Code', 'Car', 'Zap', 'Music', 'Coffee', 'Sun'];
@@ -54,14 +56,9 @@ export default function ProjectCard({
 
         return (
             <div className="flex items-center p-4 bg-base-200 border-2 border-dashed border-primary rounded-2xl gap-4 w-full h-23">
-                <button 
-                    onClick={cycleIcon}
-                    className="p-3 bg-primary/10 rounded-xl text-primary shrink-0 hover:bg-primary/20 transition-colors"
-                    title="Click to change icon"
-                >
+                <button onClick={cycleIcon} className="p-3 bg-primary/10 rounded-xl text-primary shrink-0 hover:bg-primary/20 transition-colors">
                     <CurrentIcon size={24} />
                 </button>
-                
                 <input 
                     autoFocus
                     className="input input-ghost grow font-bold text-lg focus:bg-transparent px-0" 
@@ -71,88 +68,100 @@ export default function ProjectCard({
                     onKeyDown={(e) => e.key === 'Enter' && handleInternalSave()}
                 />
                 <div className="flex gap-2 shrink-0">
-                    <button className="btn btn-ghost btn-sm btn-circle" onClick={() => setIsEditing(false)}>
-                        <X size={18} />
-                    </button>
-                    <button className="btn btn-primary btn-sm" onClick={handleInternalSave}>
-                        <Save size={18} /> Save
-                    </button>
+                    <button className="btn btn-ghost btn-sm btn-circle" onClick={() => setIsEditing(false)}><X size={18} /></button>
+                    <button className="btn btn-primary btn-sm" onClick={handleInternalSave}><Save size={18} /> Save</button>
                 </div>
             </div>
         );
     }
 
-    // 3. Standard Display State
-    const LucideIcon = Icons[project.icon] || Icons.Briefcase;
+    // Logic for existing projects
     const isActive = activeSession?.projectId === project.id;
     const isOtherActive = activeSession && !isActive;
 
+    // Filter today's logs for this project
+    const today = new Date().toISOString().split('T')[0];
+    const projectLogs = logs
+        .filter(log => log.projectId === project.id && log.startTime.startsWith(today))
+        .sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+
+    useEffect(() => {
+        let interval;
+        if (isActive && isExpanded) {
+            const updateTicker = () => {
+                const diff = new Date() - new Date(activeSession.startTime);
+                const h = Math.floor(diff / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+                setElapsed(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+            };
+            updateTicker();
+            interval = setInterval(updateTicker, 1000);
+        }
+        return () => clearInterval(interval);
+    }, [isActive, isExpanded, activeSession]);
+
+    const LucideIcon = Icons[project.icon] || Icons.Briefcase;
+
     return (
-        <div 
-            className={`relative flex flex-col p-4 bg-base-200 border-2 rounded-2xl shadow-sm transition-all gap-2 w-full ${
-                isActive ? 'border-primary/50 bg-primary/5' : isManageMode ? 'border-error/20' : 'border-transparent hover:shadow-md'
-            } ${isExpanded ? 'h-auto' : 'h-23'}`}
-        >
+        <div className={`relative flex flex-col p-4 bg-base-200 border-2 rounded-2xl shadow-sm transition-all gap-2 w-full ${isActive ? 'border-primary/50 bg-primary/5' : isManageMode ? 'border-error/20' : 'border-transparent hover:shadow-md'} ${isExpanded ? 'h-auto' : 'h-23'}`}>
             <div className="flex items-center gap-4 w-full">
                 <div className={`p-3 rounded-xl shrink-0 ${isManageMode ? 'bg-error/10 text-error' : 'bg-primary/10 text-primary'}`}>
                     <LucideIcon size={24} />
                 </div>
-
                 <div className="grow">
                     <h3 className="font-bold text-lg leading-tight">{project.name}</h3>
-                    <p className="text-xs opacity-50">
-                        {isManageMode ? 'Manage project data' : isActive ? 'Currently tracking...' : 'Ready to focus?'}
-                    </p>
+                    <p className="text-xs opacity-50">{isManageMode ? 'Manage project data' : isActive ? 'Currently tracking...' : 'Ready to focus?'}</p>
                 </div>
-
                 <div className="flex flex-col items-end justify-center gap-2 shrink-0 h-full">
                     {isManageMode ? (
                         <div className="flex gap-2">
-                            <button className="btn btn-sm btn-ghost text-warning hover:bg-warning/10" onClick={() => onClearLogs(project.id, project.name)} title="Clear all logs">
-                                <Eraser size={18} />
-                            </button>
-                            <button className="btn btn-sm btn-error btn-outline" onClick={() => onClick(project.id)} title="Delete project">
-                                <Trash2 size={18} />
-                            </button>
+                            <button className="btn btn-sm btn-ghost text-warning hover:bg-warning/10" onClick={() => onClearLogs(project.id, project.name)}><Eraser size={18} /></button>
+                            <button className="btn btn-sm btn-error btn-outline" onClick={() => onClick(project.id)}><Trash2 size={18} /></button>
                         </div>
                     ) : (
                         <>
                             <div className="flex items-center gap-2">
-                                <span className="text-xs font-mono opacity-60 bg-base-300 px-2 py-1 rounded-lg">
-                                    {dailyTotal}
-                                </span>
-                                <button 
-                                    onClick={() => setIsExpanded(!isExpanded)}
-                                    className={`btn btn-ghost btn-xs btn-circle transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
-                                >
-                                    <ChevronDown size={16} />
-                                </button>
+                                <span className="text-xs font-mono opacity-60 bg-base-300 px-2 py-1 rounded-lg">{dailyTotal}</span>
+                                <button onClick={() => setIsExpanded(!isExpanded)} className={`btn btn-ghost btn-xs btn-circle transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}><ChevronDown size={16} /></button>
                             </div>
-                            <button 
-                                className={`btn btn-sm w-20 ${isActive ? 'btn-error' : isOtherActive ? 'btn-outline btn-primary' : 'btn-primary'}`} 
-                                onClick={() => isActive ? onStop() : onStart(project.id, project.name)}
-                            >
+                            <button className={`btn btn-sm w-20 ${isActive ? 'btn-error' : isOtherActive ? 'btn-outline btn-primary' : 'btn-primary'}`} onClick={() => isActive ? onStop() : onStart(project.id, project.name)}>
                                 {isActive ? 'Stop' : isOtherActive ? 'Switch' : 'Start'}
                             </button>
                         </>
                     )}
                 </div>
             </div>
-
-            {/* Expanded Content Section */}
             {isExpanded && (
-                <div className="mt-2 pt-2 border-t border-base-content/5 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="mt-2 pt-2 border-t border-base-content/5 flex flex-col gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                    {/* Live Section */}
                     <div className="flex justify-between items-center bg-base-300/30 p-3 rounded-xl">
                         <div className="flex items-center gap-2 text-xs font-medium">
                             <Clock size={14} className={isActive ? "text-primary animate-pulse" : "opacity-40"} />
-                            <span className={isActive ? "text-primary" : "opacity-40"}>
-                                {isActive ? "Live Session" : "No Active Session"}
-                            </span>
+                            <span className={isActive ? "text-primary font-bold" : "opacity-40"}>{isActive ? "Live Session" : "No Active Session"}</span>
                         </div>
                         {isActive && (
-                            <span className="text-xs font-mono opacity-70">
-                                {new Date(activeSession.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} — Now
-                            </span>
+                            <div className="flex flex-col items-end">
+                                <span className="text-sm font-mono font-bold text-primary">{elapsed}</span>
+                                <span className="text-[10px] opacity-50 font-mono text-primary">Started: {new Date(activeSession.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* History Section */}
+                    <div className="flex flex-col gap-2 px-1">
+                        <span className="text-[10px] uppercase font-black tracking-widest opacity-30">Today's History</span>
+                        {projectLogs.length > 0 ? (
+                            projectLogs.map(log => (
+                                <div key={log.id} className="flex justify-between items-center text-xs py-1 border-b border-base-content/5 last:border-0">
+                                    <span className="opacity-60 font-mono">
+                                        {new Date(log.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} – {new Date(log.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                    <span className="font-bold opacity-80">{Math.floor(log.durationMs / 60000)}m</span>
+                                </div>
+                            ))
+                        ) : (
+                            <span className="text-xs italic opacity-30">No completed sessions yet today.</span>
                         )}
                     </div>
                 </div>
