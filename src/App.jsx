@@ -1,5 +1,6 @@
 /* Path: src/App.jsx */
 import React, { useEffect, useState } from 'react';
+import { Routes, Route, Link } from 'react-router';
 import { Sun, Moon, Settings } from 'lucide-react';
 
 function App() {
@@ -26,16 +27,27 @@ function App() {
         </button>
         
         {/* Settings */}
-        <button className="btn btn-outline btn-circle">
+        <Link to="/settings" className="btn btn-outline btn-circle">
           <Settings size={24} />
-        </button>
+        </Link>
       </div>
 
       {/* Main Content */}
-      <div className="grow flex flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold">Theme Test</h1>
-        <button className="btn btn-primary">Action Button</button>
-      </div>
+      <Routes>
+        <Route path="/" element={
+          <div className="grow flex flex-col items-center justify-center gap-4">
+            <h1 className="text-2xl font-bold">Theme Test</h1>
+            <button className="btn btn-primary">Action Button</button>
+          </div>
+        } />
+        
+        <Route path="/settings" element={
+          <div className="grow flex flex-col items-center justify-center gap-4">
+            <h1 className="text-2xl font-bold">Settings Page</h1>
+            <Link to="/" className="btn btn-secondary">Back to Home</Link>
+          </div>
+        } />
+      </Routes>
       
     </div>
   );
