@@ -136,18 +136,17 @@ export default function ProjectCard({
                 </div>
             </div>
             {isExpanded && (
-                <div className="mt-2 pt-2 border-t border-base-content/5 flex flex-col gap-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="mt-2 pt-2 border-t border-base-content/5 flex flex-col gap-2 animate-in fade-in slide-in-from-top-1 duration-200">
                     {/* Live Section */}
-                    <div className="flex justify-between items-center bg-base-300/30 p-3 rounded-xl gap-4">
-                        <div className="flex flex-col gap-1 grow">
+                    <div className="flex justify-between items-center bg-base-300/30 p-2 rounded-xl gap-2">
+                        <div className="flex flex-col grow">
                             <div className="flex items-center gap-2 text-xs font-medium">
                                 <Clock size={14} className={isActive ? "text-primary animate-pulse" : "opacity-40"} />
                                 <span className={isActive ? "text-primary font-bold" : "status-text"}>{isActive ? "Live Session" : "No Active Session"}</span>
                             </div>
                             {isActive && (
                                 <select 
-                                    /* Removed h-auto and min-h-0 so the CSS h-11/text-base works */
-                                    className="select select-ghost select-xs font-bold text-primary focus:bg-transparent focus:outline-none min-w-40 px-2"
+                                    className="select select-ghost select-xs font-bold text-primary focus:bg-transparent focus:outline-none min-w-44 px-0"
                                     value={activeSession.taskId || ""}
                                     onChange={(e) => onUpdateActiveTask(e.target.value)}
                                 >
@@ -162,36 +161,42 @@ export default function ProjectCard({
                         </div>
                         {isActive && (
                             <div className="flex flex-col items-end shrink-0">
-                                <span className="text-sm font-mono font-bold text-primary">{elapsed}</span>
-                                <span className="text-[10px] opacity-50 font-mono text-primary">Started: {new Date(activeSession.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                <span className="text-base font-mono font-bold text-primary">{elapsed}</span>
+                                <span className="text-[10px] opacity-50 font-mono text-primary">{new Date(activeSession.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
                         )}
                     </div>
 
                     {/* History Section */}
-                    <div className="flex flex-col gap-2 px-1">
-                        <span className="text-[10px] uppercase font-black tracking-widest opacity-30">Today's History</span>
+                    <div className="flex flex-col gap-1 px-0">
+                        <span className="status-text font-black">Today's History</span>
                         {projectLogs.length > 0 ? (
                             projectLogs.map(log => (
-                                <div key={log.id} className="flex justify-between items-center text-xs py-3 border-b border-base-content/5 last:border-0 min-h-14">
-                                    <div className="flex flex-col gap-1 grow">
-                                        <span className="opacity-60 font-mono">
+                                <div key={log.id} className="flex justify-between items-center py-1 border-b border-base-content/5 last:border-0">
+                                    <div className="flex flex-col grow">
+                                        <span className="opacity-60 font-mono text-sm">
                                             {new Date(log.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} – {new Date(log.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                         <select 
-                                            className="select select-ghost select-xs p-0 h-auto min-h-0 font-medium text-primary focus:bg-transparent focus:outline-none w-fit"
+                                            className="select select-ghost select-xs font-bold text-primary focus:bg-transparent focus:outline-none min-w-44 px-0" 
                                             value={log.taskId || ""}
                                             onChange={(e) => onUpdateLogTask(log.id, e.target.value)}
                                         >
                                             <option value="">No task assigned</option>
-                                            {tasks.map(t => <option key={t.id} value={t.id}>{t.completed ? '✓ ' : ''}{t.text}</option>)}
+                                            {tasks.map(t => (
+                                                <option key={t.id} value={t.id}>
+                                                    {t.completed ? '✓ ' : ''}{t.text}
+                                                </option>
+                                            ))}
                                         </select>
                                     </div>
-                                    <span className="font-bold opacity-80 shrink-0">{Math.floor(log.durationMs / 60000)}m</span>
+                                    <span className="font-bold opacity-80 shrink-0 text-base">
+                                        {Math.floor(log.durationMs / 60000)}m
+                                    </span>
                                 </div>
                             ))
                         ) : (
-                            <span className="text-xs italic opacity-30">No completed sessions yet today.</span>
+                            <span className="text-sm italic opacity-30">No completed sessions yet today.</span>
                         )}
                     </div>
                 </div>
