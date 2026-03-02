@@ -55,7 +55,7 @@ export const useTracking = (logs, setLogs, triggerToast) => {
     };
 
     const updateActiveTask = (taskId) => {
-        console.log("TrackingHook: Updating active task to:", taskId);
+        //console.log("TrackingHook: Updating active task to:", taskId);
         if (!activeSession) {
             console.warn("TrackingHook: No active session found to update!");
             return;

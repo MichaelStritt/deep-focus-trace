@@ -145,7 +145,7 @@ export default function ProjectCard({
                                     className="select select-ghost select-xs p-0 h-auto min-h-0 font-medium text-primary focus:bg-transparent focus:outline-none w-fit"
                                     value={activeSession.taskId || ""}
                                     onChange={(e) => {
-                                        console.log("Live task selection:", e.target.value);
+                                        //console.log("Live task selection:", e.target.value);
                                         onUpdateActiveTask(e.target.value);
                                     }}
                                 >
