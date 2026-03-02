@@ -6,11 +6,10 @@ import TaskCard from './TaskCard';
 export default function TaskList({ 
     tasks, 
     isManageMode, 
-    onReorder, 
-    onDelete, 
-    onToggle 
+    onReorder,
+    onDelete,
+    onToggle
 }) {
-    // Keep sorting logic consistent with projects
     const sortedTasks = [...tasks].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
 
     return (
