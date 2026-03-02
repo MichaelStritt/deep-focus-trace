@@ -25,7 +25,7 @@ function App() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center gap-4">
+      <div className="grow flex flex-col items-center justify-center gap-4">
         <h1 className="text-2xl font-bold">Theme Test</h1>
         <button className="btn btn-primary">Action Button</button>
       </div>
