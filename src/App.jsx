@@ -1,10 +1,11 @@
 /* Path: src/App.jsx */
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, Link } from 'react-router';
-import { Sun, Moon, Settings } from 'lucide-react';
+import { Routes, Route, Link, useLocation } from 'react-router';
+import { Sun, Moon, Settings, Home } from 'lucide-react';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const location = useLocation(); // Get current path
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -26,10 +27,16 @@ function App() {
           {theme === "light" ? <Moon size={24} /> : <Sun size={24} />}
         </button>
         
-        {/* Settings */}
-        <Link to="/settings" className="btn btn-outline btn-circle">
-          <Settings size={24} />
-        </Link>
+        {/* Settings / Home Toggle */}
+        {location.pathname === '/settings' ? (
+          <Link to="/" className="btn btn-outline btn-circle">
+            <Home size={24} />
+          </Link>
+        ) : (
+          <Link to="/settings" className="btn btn-outline btn-circle">
+            <Settings size={24} />
+          </Link>
+        )}
       </div>
 
       {/* Main Content */}
@@ -44,7 +51,6 @@ function App() {
         <Route path="/settings" element={
           <div className="grow flex flex-col items-center justify-center gap-4">
             <h1 className="text-2xl font-bold">Settings Page</h1>
-            <Link to="/" className="btn btn-secondary">Back to Home</Link>
           </div>
         } />
       </Routes>
